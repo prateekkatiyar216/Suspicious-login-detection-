@@ -37,11 +37,11 @@ It includes user registration, login, admin dashboard, and real-time detection o
    ## 📸 Screenshots
 
 ### 🔑 Login Page
-![Login Page](assets/login_page.png)
+![Login Page](assets/login_page.jpeg)
 
 ### 📝 Register Page
-![Register Page](assets/register_page.png)
+![Register Page](assets/register_page.jpeg)
 
 ### 📊 Admin Dashboard
-![Dashboard](assets/dashboard.png)
+![Dashboard](assets/dashboard.jpeg)
 
