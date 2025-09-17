@@ -33,3 +33,15 @@ It includes user registration, login, admin dashboard, and real-time detection o
    ```bash
    git clone https://github.com/prateekkatiyar216/Suspicious-login-detection.git
    cd Suspicious-login-detection
+
+   ## 📸 Screenshots
+
+### 🔑 Login Page
+![Login Page](assets/login_page.png)
+
+### 📝 Register Page
+![Register Page](assets/register_page.png)
+
+### 📊 Admin Dashboard
+![Dashboard](assets/dashboard.png)
+
