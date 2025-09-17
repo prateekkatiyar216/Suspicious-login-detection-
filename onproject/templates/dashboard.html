@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeInUp {
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 min-h-screen text-white font-sans">
+
+  <!-- Header -->
+  <header class="p-6 bg-gray-800/50 backdrop-blur-md shadow-lg sticky top-0 z-50">
+    <h1 class="text-3xl font-bold tracking-tight">⚡ Admin Dashboard</h1>
+  </header>
+
+  <!-- Search & Filter -->
+  <section class="p-6">
+    <form method="GET" action="/dashboard" class="flex flex-wrap gap-4 items-center animate-fadeInUp">
+      <input type="text" name="search" placeholder="Search username, IP, or country"
+        value="{{ request.args.get('search', '') }}"
+        class="px-4 py-2 rounded-xl border border-gray-600 bg-gray-700/60 backdrop-blur-md focus:ring-2 focus:ring-indigo-500 outline-none transition w-64">
+
+      <select name="status_filter"
+        class="px-4 py-2 rounded-xl border border-gray-600 bg-gray-700/60 backdrop-blur-md focus:ring-2 focus:ring-indigo-500 outline-none transition">
+        <option value="">All Status</option>
+        <option value="Active" {% if request.args.get('status_filter') == 'Active' %}selected{% endif %}>Active</option>
+        <option value="Blocked" {% if request.args.get('status_filter') == 'Blocked' %}selected{% endif %}>Blocked</option>
+      </select>
+
+      <button type="submit"
+        class="px-5 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition transform hover:scale-105 shadow-lg">
+        🔍 Search
+      </button>
+
+      <a href="/dashboard"
+        class="px-5 py-2 rounded-xl bg-gray-600 hover:bg-gray-700 transition transform hover:scale-105 shadow-lg">
+        Reset
+      </a>
+    </form>
+  </section>
+
+  <!-- Registered Users -->
+  <section class="p-6 space-y-4 animate-fadeInUp">
+    <h2 class="text-2xl font-semibold">📋 Registered Users</h2>
+    <div class="overflow-x-auto rounded-xl shadow-lg border border-gray-700 bg-gray-800/50 backdrop-blur-lg">
+      <table class="min-w-full text-sm text-gray-200">
+        <thead class="bg-indigo-600 text-white">
+          <tr>
+            <th class="px-4 py-3">Username</th>
+            <th class="px-4 py-3">Email</th>
+            <th class="px-4 py-3">IP Address</th>
+            <th class="px-4 py-3">IP Location</th>
+            <th class="px-4 py-3">GPS Location</th>
+            <th class="px-4 py-3">Country</th>
+            <th class="px-4 py-3">Reg. Time</th>
+            <th class="px-4 py-3">Status</th>
+            <th class="px-4 py-3">Fingerprint</th>
+            <th class="px-4 py-3">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr class="hover:bg-gray-700/50 transition">
+            <td class="px-4 py-3">{{ user[0] }}</td>
+            <td class="px-4 py-3">{{ user[1] }}</td>
+            <td class="px-4 py-3">{{ user[2] }}</td>
+            <td class="px-4 py-3">{{ user[4] }}</td>
+            <td class="px-4 py-3">
+              {% if user[6] and user[6] != 'Unknown' %}
+                {{ user[6] }}<br>
+                <a href="https://www.google.com/maps?q={{ user[6] }}" target="_blank" class="text-indigo-400 hover:underline">📍 View</a>
+              {% else %} Unknown {% endif %}
+            </td>
+            <td class="px-4 py-3">{{ user[7] }}</td>
+            <td class="px-4 py-3">{{ user[3] }}</td>
+            <td class="px-4 py-3 font-semibold {{ 'text-green-400' if user[5] == 'Active' else 'text-red-400' }}">{{ user[5] }}</td>
+            <td class="px-4 py-3">
+              <span class="block"><b>Browser:</b> {{ user[8] }}</span>
+              <span class="block"><b>OS:</b> {{ user[9] }}</span>
+              <span class="block"><b>Resolution:</b> {{ user[10] }}</span>
+              <span class="block"><b>Timezone:</b> {{ user[11] }}</span>
+              <span class="block"><b>Language:</b> {{ user[12] }}</span>
+            </td>
+            <td class="px-4 py-3">
+              <form method="POST" action="/update-user-status" class="flex flex-col gap-2">
+                <input type="hidden" name="username" value="{{ user[0] }}">
+                <select name="status" class="rounded-lg bg-gray-700 px-2 py-1">
+                  <option value="Active" {% if user[5] == 'Active' %}selected{% endif %}>Active</option>
+                  <option value="Blocked" {% if user[5].startswith('Blocked') %}selected{% endif %}>Blocked</option>
+                </select>
+                <button type="submit" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded-lg text-white font-bold transition transform hover:scale-105">
+                  🚫 Update
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Login Attempts -->
+  <section class="p-6 space-y-4 animate-fadeInUp">
+    <h2 class="text-2xl font-semibold">🔐 Login Attempts</h2>
+    <div class="overflow-x-auto rounded-xl shadow-lg border border-gray-700 bg-gray-800/50 backdrop-blur-lg">
+      <table class="min-w-full text-sm text-gray-200">
+        <thead class="bg-indigo-600 text-white">
+          <tr>
+            <th class="px-4 py-3">Username</th>
+            <th class="px-4 py-3">IP Address</th>
+            <th class="px-4 py-3">IP Location</th>
+            <th class="px-4 py-3">GPS Location</th>
+            <th class="px-4 py-3">Country</th>
+            <th class="px-4 py-3">Login Time</th>
+            <th class="px-4 py-3">Status</th>
+            <th class="px-4 py-3">Fingerprint</th>
+            <th class="px-4 py-3">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for login in logins %}
+          <tr class="hover:bg-gray-700/50 transition {{ 'bg-green-900/40' if login[7] == 'Normal' else 'bg-yellow-900/40' if login[7] == 'Suspicious' else 'bg-red-900/40' }}">
+            <td class="px-4 py-3">{{ login[1] }}</td>
+            <td class="px-4 py-3">{{ login[2] }}</td>
+            <td class="px-4 py-3">{{ login[4] }}</td>
+            <td class="px-4 py-3">
+              {% if login[5] and login[5] != 'Unknown' %}
+                {{ login[5] }}<br>
+                <a href="https://www.google.com/maps?q={{ login[5] }}" target="_blank" class="text-indigo-400 hover:underline">📍 View</a>
+              {% else %} Unknown {% endif %}
+            </td>
+            <td class="px-4 py-3">{{ login[6] }}</td>
+            <td class="px-4 py-3">{{ login[3] }}</td>
+            <td class="px-4 py-3 font-semibold">{{ login[7] }}</td>
+            <td class="px-4 py-3">
+              <span class="block"><b>Browser:</b> {{ login[8] }}</span>
+              <span class="block"><b>OS:</b> {{ login[9] }}</span>
+              <span class="block"><b>Resolution:</b> {{ login[10] }}</span>
+              <span class="block"><b>Timezone:</b> {{ login[11] }}</span>
+              <span class="block"><b>Language:</b> {{ login[12] }}</span>
+            </td>
+            <td class="px-4 py-3">
+              <form method="POST" action="/update-status" class="flex flex-col gap-2">
+                <input type="hidden" name="attempt_id" value="{{ login[0] }}">
+                <select name="status" class="rounded-lg bg-gray-700 px-2 py-1">
+                  <option value="Normal" {% if login[7] == 'Normal' %}selected{% endif %}>Normal</option>
+                  <option value="Suspicious" {% if login[7] == 'Suspicious' %}selected{% endif %}>Suspicious</option>
+                  <option value="Blocked User" {% if login[7] == 'Blocked User' %}selected{% endif %}>Blocked</option>
+                </select>
+                <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 px-3 py-1 rounded-lg text-white font-bold transition transform hover:scale-105">
+                  ✔️
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</body>
+</html>

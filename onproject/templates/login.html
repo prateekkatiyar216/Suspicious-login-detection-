@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Animate.css for animations -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+  <!-- ClientJS for Fingerprinting -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clientjs/0.1.11/client.min.js"></script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      background-size: 400% 400%;
+      animation: gradientBG 10s ease infinite;
+    }
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+  </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen">
+
+  <div class="backdrop-blur-lg bg-white/20 p-8 rounded-2xl shadow-2xl w-96 animate__animated animate__fadeIn">
+    <h2 class="text-3xl font-bold text-center text-white mb-6">🔐 Login</h2>
+
+    <form method="POST" class="space-y-4">
+      <input name="username" placeholder="Username" required
+        class="w-full px-4 py-2 rounded-lg bg-white/80 border border-gray-300 focus:ring-2 focus:ring-blue-400 outline-none">
+
+      <input name="password" type="password" placeholder="Password" required
+        class="w-full px-4 py-2 rounded-lg bg-white/80 border border-gray-300 focus:ring-2 focus:ring-blue-400 outline-none">
+
+      <!-- Hidden fields for GPS -->
+      <input type="hidden" name="latitude" id="latitude">
+      <input type="hidden" name="longitude" id="longitude">
+
+      <!-- Hidden field for Fingerprint -->
+      <input type="hidden" name="browser" id="browser">
+      <input type="hidden" name="os" id="os">
+      <input type="hidden" name="resolution" id="resolution">
+      <input type="hidden" name="timezone" id="timezone">
+      <input type="hidden" name="language" id="language">
+
+      <button type="submit" id="submitBtn" disabled
+        class="w-full py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl disabled:opacity-50">
+        Login
+      </button>
+    </form>
+
+    <div class="text-center mt-4 text-white">
+      <p>Don't have an account? <a href="/register" class="underline hover:text-yellow-300 transition">Register here</a></p>
+      <p class="mt-2"><strong>Admin?</strong> <a href="/admin-login" class="underline hover:text-yellow-300 transition">Login here</a></p>
+    </div>
+  </div>
+
+<script>
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            document.getElementById("latitude").value = position.coords.latitude;
+            document.getElementById("longitude").value = position.coords.longitude;
+            console.log("GPS Location Captured:", position.coords.latitude, position.coords.longitude);
+            checkReady();
+        }, function() {
+            alert("Please allow location access.");
+        });
+    } else {
+        alert("Geolocation not supported by your browser.");
+    }
+}
+
+function generateSimpleFingerprint() {
+    const browser = navigator.userAgent.match(/(Chrome|Firefox|Safari|Edge)/i)?.[0] || "Unknown";
+    const resolution = screen.width + "x" + screen.height;
+    const os = navigator.userAgent.match(/(Windows|Mac OS|Linux|Android|iOS)/i)?.[0] || "Unknown";
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const language = navigator.language;
+
+    document.getElementById("browser").value = browser;
+    document.getElementById("os").value = os;
+    document.getElementById("resolution").value = resolution;
+    document.getElementById("timezone").value = timezone;
+    document.getElementById("language").value = language;
+
+    console.log("Fingerprint Captured:", browser, os, resolution, timezone, language);
+    checkReady();
+}
+
+function checkReady() {
+    const fields = ["latitude", "longitude", "browser", "os", "resolution", "timezone", "language"];
+    if (fields.every(id => document.getElementById(id).value)) {
+        document.getElementById("submitBtn").disabled = false;
+    }
+}
+
+window.onload = function() {
+    getLocation();
+    generateSimpleFingerprint();
+};
+</script>
+
+</body>
+</html>

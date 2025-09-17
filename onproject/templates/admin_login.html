@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #ff4b1f, #1fddff);
+      background-size: 400% 400%;
+      animation: gradientBG 8s ease infinite;
+    }
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+
+  <div class="backdrop-blur-lg bg-white/10 p-8 rounded-2xl shadow-2xl w-96 animate__animated animate__fadeInDown text-white border border-white/20">
+    <div class="flex justify-center mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-red-400 animate__animated animate__pulse animate__infinite" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-7a2 2 0 00-2-2h-1V7a5 5 0 10-10 0v3H6a2 2 0 00-2 2v7a2 2 0 002 2z"/>
+      </svg>
+    </div>
+
+    <h2 class="text-3xl font-bold text-center mb-6">Admin Login</h2>
+
+    <form method="POST" class="space-y-4">
+      <input name="username" placeholder="Admin Username" required
+        class="w-full px-4 py-2 rounded-lg bg-white/80 text-black border border-gray-300 focus:ring-2 focus:ring-red-400 outline-none">
+
+      <input name="password" type="password" placeholder="Password" required
+        class="w-full px-4 py-2 rounded-lg bg-white/80 text-black border border-gray-300 focus:ring-2 focus:ring-red-400 outline-none">
+
+      <button type="submit"
+        class="w-full py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl">
+        Login as Admin
+      </button>
+    </form>
+  </div>
+
+</body>
+</html>
